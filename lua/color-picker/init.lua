@@ -300,6 +300,7 @@ function Picker:fill()
     vim.api.nvim_set_option_value('modifiable', false, { buf = self.buf })
 end
 
+---@param row integer
 ---@param col integer
 ---@param jump integer
 ---@return integer
