@@ -1,6 +1,7 @@
 local M = {}
 
 M.COLOR_HEX_REGEX = '#(%x%x)(%x%x)(%x%x)(%x?%x?)'
+M.COLOR_HEX_SHORT_REGEX = '#(%x)(%x)(%x)(%x?)'
 M.COLOR_RGB_REGEX = 'rgb%( *(%d+) *, *(%d+) *, *(%d+) *%)'
 M.COLOR_RGBA_REGEX = 'rgba%( *(%d+) *, *(%d+) *, *(%d+), *(%d+%.?%d*) *%)'
 
@@ -220,7 +221,10 @@ local function extract_hex(str, init)
 
     local start, end_ = string.find(str, M.COLOR_HEX_REGEX, init)
     if start == nil then
-        return
+        start, end_ = string.find(str, M.COLOR_HEX_SHORT_REGEX, init)
+        if start == nil then
+            return
+        end
     end
     return string.sub(str, start, end_), start
 end
@@ -319,6 +323,14 @@ end
 ---@return ColorRGBA
 function M.parse_hex(str)
     local r, g, b, a = string.match(str, M.COLOR_HEX_REGEX)
+    if r == nil then
+        ---@type string, string, string, string
+        r, g, b, a = string.match(str, M.COLOR_HEX_SHORT_REGEX)
+        r = r .. r
+        g = g .. g
+        b = b .. b
+        a = a .. a
+    end
 
     ---@type ColorRGBA
     local rgba = {
