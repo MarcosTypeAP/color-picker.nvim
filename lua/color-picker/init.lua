@@ -540,6 +540,7 @@ end
 
 ---@param format ColorFormat
 function M.reformat(format)
+    format = string.lower(format)
     local valid = false
     for _, f in pairs(COLOR_FORMATS) do
         if f == format then
