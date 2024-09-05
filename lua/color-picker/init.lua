@@ -461,6 +461,10 @@ function Picker:write_color(rgb, replace_data)
         local row = pos[1] - 1
         local col = pos[2] + 1
 
+        if #vim.api.nvim_get_current_line() == 0 then
+            col = col - 1
+        end
+
         vim.api.nvim_buf_set_text(0,
             row, col,
             row, col,
