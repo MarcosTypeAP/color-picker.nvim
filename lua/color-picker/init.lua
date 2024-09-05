@@ -511,7 +511,7 @@ end
 ---@field replace_data? ReplaceData
 
 ---@param opts? OpenOpts
-function M.insert(opts)
+function M.open(opts)
     opts = opts or {}
 
     local defaults = get_defaults({ height = opts.height, width = opts.width })
@@ -525,6 +525,21 @@ function M.insert(opts)
 
     Picker:init(defaults.height, defaults.width)
     Picker:open(rgba, opts.replace_data)
+end
+
+---@class InsertOpts
+---@field color? string
+---@field height? integer
+---@field width? integer
+
+---@param opts? InsertOpts
+function M.insert(opts)
+    opts = opts or {}
+    M.open({
+        color = opts.color,
+        height = opts.height,
+        width = opts.width,
+    })
 end
 
 ---@class ReplaceOpts
