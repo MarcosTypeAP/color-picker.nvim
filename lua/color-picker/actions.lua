@@ -157,8 +157,9 @@ function M.hue_left(picker)
     if not picker:is_open() then
         return
     end
+    local hue_step = picker:get_hue_step()
     local count = math.max(1, vim.v.count)
-    picker.hue = (picker.hue - 10 * count) % 360
+    picker.hue = (picker.hue - hue_step * count) % 360
     picker:update_buf(true)
 end
 
@@ -167,8 +168,9 @@ function M.hue_right(picker)
     if not picker:is_open() then
         return
     end
+    local hue_step = picker:get_hue_step()
     local count = math.max(1, vim.v.count)
-    picker.hue = (picker.hue + 10 * count) % 360
+    picker.hue = (picker.hue + hue_step * count) % 360
     picker:update_buf(true)
 end
 

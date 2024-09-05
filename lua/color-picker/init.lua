@@ -21,8 +21,9 @@ local COLOR_FORMATS = { 'hex', 'rgb', 'rgba' }
 ---@field width integer
 ---@field jump_v integer
 ---@field jump_h integer
----@field format ColorFormat
 ---@field hue_char string
+---@field hue_step number
+---@field format ColorFormat
 ---@field mappings PickerMappings
 
 ---@class PickerDefaultsPartial : PickerDefaults
@@ -30,8 +31,9 @@ local COLOR_FORMATS = { 'hex', 'rgb', 'rgba' }
 ---@field width? integer
 ---@field jump_v? integer
 ---@field jump_h? integer
----@field format? ColorFormat
 ---@field hue_char? string
+---@field hue_step? number
+---@field format? ColorFormat
 ---@field mappings? PickerMappings
 
 ---@type PickerDefaults
@@ -40,8 +42,9 @@ local DEFAULTS = {
     width = MIN_WIDTH,
     jump_v = -1, -- sqrt(height)
     jump_h = -1, -- sqrt(width)
-    format = 'hex',
     hue_char = '|',
+    hue_step = 10,
+    format = 'hex',
     mappings = {
         ['k'] = actions.move_up,
         ['j'] = actions.move_down,
@@ -79,8 +82,9 @@ local function get_defaults(partial)
         width = property('width'),
         jump_v = property('jump_v'),
         jump_h = property('jump_h'),
-        format = property('format'),
+        hue_step = property('hue_step'),
         hue_char = property('hue_char'),
+        format = property('format'),
         mappings = property('mappings'),
     }
 end
@@ -107,6 +111,7 @@ end
 ---@field palette_height integer
 ---@field hue number
 ---@field hue_char string
+---@field hue_step number
 ---@field jump_v integer
 ---@field jump_h integer
 ---@field init_color ColorRGBA
@@ -356,6 +361,16 @@ function Picker:get_jump_len_h()
     end
 
     return self.jump_h
+end
+
+---@return number
+function Picker:get_hue_step()
+    if self.hue_step == nil then
+        local defaults = get_defaults()
+        self.hue_step = defaults.hue_step
+    end
+
+    return self.hue_step
 end
 
 function Picker:set_keymaps()
