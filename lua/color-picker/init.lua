@@ -1,4 +1,5 @@
 local utils = require('color-picker.utils')
+local conv = require('color-picker.conversions')
 local actions = require('color-picker.actions')
 
 local MIN_HEIGHT = 9 + 3
@@ -151,7 +152,7 @@ function Picker:open(rgb, replace_data)
     self.init_color = rgb
     self.replace_data = replace_data
 
-    self.hue = utils.rgb2hsl(rgb).hue
+    self.hue = conv.rgb2hsl(rgb).hue
 
     self.win = vim.api.nvim_open_win(self.buf, true, {
         relative = 'cursor',
@@ -205,7 +206,7 @@ function Picker:colorize(palette)
     local step = 360 / (self.width - 1)
     for col = 0, self.width - 1, 1 do
         local hue = step * col
-        local hue_rgb = utils.hue2rgb(hue)
+        local hue_rgb = conv.hue2rgb(hue)
         ---@type ColorRGB
         local rgb = {
             255 * hue_rgb[1],
@@ -273,13 +274,13 @@ function Picker:get_rgb_from_pos(row, col)
         sat = col / (self.width - 1),
         hue = self.hue
     }
-    return utils.hsl2rgb(hsl)
+    return conv.hsl2rgb(hsl)
 end
 
 ---@param rgb ColorRGB
 ---@return [integer, integer]
 function Picker:get_pos_from_rgb(rgb)
-    local hsl = utils.rgb2hsl(rgb)
+    local hsl = conv.rgb2hsl(rgb)
     local row = (self.palette_height - 1) * (1 - hsl.lum) + 1
     local col = (self.width - 1) * hsl.sat
     return {

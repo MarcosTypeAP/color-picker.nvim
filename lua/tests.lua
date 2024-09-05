@@ -1,4 +1,4 @@
-local utils = require('color-picker.utils')
+local conv = require('color-picker.conversions')
 
 local ins = vim.inspect
 
@@ -17,13 +17,13 @@ end
 local function test_rgb_and_hsl_conversion_consistency()
     local rgb_in = { 160, 161, 195 }
 
-    local hsl_1 = utils.rgb2hsl(rgb_in)
+    local hsl_1 = conv.rgb2hsl(rgb_in)
 
-    local rgb_1 = utils.hsl2rgb(hsl_1)
+    local rgb_1 = conv.hsl2rgb(hsl_1)
 
-    local hsl_2 = utils.rgb2hsl(rgb_1)
+    local hsl_2 = conv.rgb2hsl(rgb_1)
 
-    local rgb_out = utils.hsl2rgb(hsl_2)
+    local rgb_out = conv.hsl2rgb(hsl_2)
 
     if not compare_rgb(rgb_in, rgb_out) then
         print(ins(rgb_in), ins(rgb_out))
@@ -37,13 +37,13 @@ local function test_rgb_and_pos_conversion_consistency()
 
     local pos_in = { 4, 20 }
 
-    local rgb_1 = utils.pos2rgb(H, W, hue, unpack(pos_in))
+    local rgb_1 = conv.pos2rgb(H, W, hue, unpack(pos_in))
 
-    local pos_1 = utils.rgb2pos(H, W, rgb_1)
+    local pos_1 = conv.rgb2pos(H, W, rgb_1)
 
-    local rgb_2 = utils.pos2rgb(H, W, hue, unpack(pos_1))
+    local rgb_2 = conv.pos2rgb(H, W, hue, unpack(pos_1))
 
-    local pos_out = utils.rgb2pos(H, W, rgb_2)
+    local pos_out = conv.rgb2pos(H, W, rgb_2)
 
     if pos_in[1] ~= pos_out[1] or pos_in[2] ~= pos_out[2] then
         print(ins(pos_in), ins(pos_out))
@@ -58,7 +58,7 @@ local function test_rgb_and_pos_conversion_edge_cases()
     ---@param col integer
     ---@param expected ColorRGB
     local function assert_pos_rgb(row, col, expected)
-        local rgb = utils.pos2rgb(H, W, 0, row, col)
+        local rgb = conv.pos2rgb(H, W, 0, row, col)
         if not compare_rgb(rgb, expected) then
             print(ins(rgb), ins(expected))
             error('failed')
@@ -73,7 +73,7 @@ local function test_rgb_and_pos_conversion_edge_cases()
     ---@param rgb ColorRGB
     ---@param expected [integer, integer]
     local function assert_rgb_pos(rgb, expected)
-        local pos = utils.rgb2pos(H, W, rgb)
+        local pos = conv.rgb2pos(H, W, rgb)
         if pos[1] ~= expected[1] or pos[2] ~= expected[2] then
             print(ins(pos), ins(expected))
             error('failed')
