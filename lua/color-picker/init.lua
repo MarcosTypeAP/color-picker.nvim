@@ -472,7 +472,7 @@ end
 function M.setup(opts)
     _user_defaults = get_defaults(opts.defaults)
 
-    vim.api.nvim_create_user_command('ColorPickerOpen', function(extra)
+    vim.api.nvim_create_user_command('ColorPickerInsert', function(extra)
         M.insert({ color = extra.fargs[1] })
     end, { nargs = '?' })
 
