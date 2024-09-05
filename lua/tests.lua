@@ -66,8 +66,8 @@ local function test_rgb_and_pos_conversion_edge_cases()
     end
 
     assert_pos_rgb(1, 0, { 255, 255, 255 })
-    assert_pos_rgb(1, 38, { 255, 0, 0 })
-    assert_pos_rgb(20, 38, { 0, 0, 0 })
+    assert_pos_rgb(1, 39, { 255, 0, 0 })
+    assert_pos_rgb(20, 39, { 0, 0, 0 })
     assert_pos_rgb(20, 0, { 0, 0, 0 })
 
     ---@param rgb ColorRGB
@@ -81,7 +81,7 @@ local function test_rgb_and_pos_conversion_edge_cases()
     end
 
     assert_rgb_pos({ 255, 255, 255 }, { 1, 0 })
-    assert_rgb_pos({ 255, 0, 0 }, { 1, 38 })
+    assert_rgb_pos({ 255, 0, 0 }, { 1, 39 })
     assert_rgb_pos({ 0, 0, 0 }, { 20, 0 })
 end
 

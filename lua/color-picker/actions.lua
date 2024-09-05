@@ -1,5 +1,3 @@
-local utils = require('color-picker.utils')
-
 local M = {}
 
 ---@param picker ColorPicker
@@ -45,12 +43,7 @@ function M.move_left(picker)
     local col = pos[2]
 
     local count = math.max(1, vim.v.count)
-
-    if pos[1] > picker.palette_height then
-        col = picker:calc_next_col(pos[1], col, -1 * count)
-    else
-        col = picker:calc_next_col(pos[1], col, -2 * count)
-    end
+    col = picker:calc_next_col(col, -1 * count)
 
     vim.api.nvim_win_set_cursor(picker.win, { pos[1], col })
     picker:update_buf(false)
@@ -65,12 +58,7 @@ function M.move_right(picker)
     local col = pos[2]
 
     local count = math.max(1, vim.v.count)
-
-    if pos[1] > picker.palette_height then
-        col = picker:calc_next_col(pos[1], col, 1 * count)
-    else
-        col = picker:calc_next_col(pos[1], col, 2 * count)
-    end
+    col = picker:calc_next_col(col, 1 * count)
 
     vim.api.nvim_win_set_cursor(picker.win, { pos[1], col })
     picker:update_buf(false)
@@ -137,7 +125,7 @@ function M.jump_left(picker)
     local count = math.max(1, vim.v.count)
 
     local jump = picker:get_jump_len_h()
-    col = picker:calc_next_col(pos[1], col, -jump * count)
+    col = picker:calc_next_col(col, -jump * count)
 
     vim.api.nvim_win_set_cursor(picker.win, { pos[1], col })
     picker:update_buf(false)
@@ -158,7 +146,7 @@ function M.jump_right(picker)
     local count = math.max(1, vim.v.count)
 
     local jump = picker:get_jump_len_h()
-    col = picker:calc_next_col(pos[1], col, jump * count)
+    col = picker:calc_next_col(col, jump * count)
 
     vim.api.nvim_win_set_cursor(picker.win, { pos[1], col })
     picker:update_buf(false)

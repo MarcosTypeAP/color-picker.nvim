@@ -1,8 +1,8 @@
 local utils = require('color-picker.utils')
 local actions = require('color-picker.actions')
 
-local MIN_HEIGHT = 13
-local MIN_WIDTH = 20
+local MIN_HEIGHT = 9 + 3
+local MIN_WIDTH = 9 * 2
 
 local COLOR_HEX_FORMAT = '#%02X%02X%02X'
 local COLOR_HEX_ALPHA_FORMAT = '#%02X%02X%02X%02X'
@@ -131,10 +131,6 @@ function Picker:init(height, width)
         error(string.format('Invalid dimensions (min HxW = %dx%d)', MIN_HEIGHT, MIN_WIDTH))
     end
 
-    if width % 2 ~= 0 then
-        width = width - 1
-    end
-
     self.height = height
     self.width = width
     self.palette_height = height - 3 -- hue, hex, and rgb lines
@@ -233,7 +229,7 @@ function Picker:colorize(palette)
     vim.api.nvim_set_hl(hl_ns, 'preview-curr',
         { bg = string.format('#%02X%02X%02X', unpack(curr_color)) })
     local hex_size = 7
-    local pad = 1
+    local pad = 1 - self.width % 2
     local preview_size = (self.width - hex_size - pad) / 2
     -- #RRGGBB [CURR][INIT]
     vim.api.nvim_buf_add_highlight(self.buf, hl_ns, 'preview-curr', self.palette_height + 1,
@@ -247,11 +243,11 @@ function Picker:colorize(palette)
 
     -- palette
     for row = 1, self.palette_height, 1 do
-        for col = 0, self.width - 1, 2 do
+        for col = 0, self.width - 1, 1 do
             local group = string.format('%d-%d', row, col)
             local rgb = self:get_rgb_from_pos(row, col)
             vim.api.nvim_set_hl(hl_ns, group, { bg = string.format('#%02X%02X%02X', unpack(rgb)) })
-            vim.api.nvim_buf_add_highlight(self.buf, hl_ns, group, row - 1, col, col + 2)
+            vim.api.nvim_buf_add_highlight(self.buf, hl_ns, group, row - 1, col, col + 1)
         end
     end
 end
@@ -269,7 +265,7 @@ function Picker:get_rgb_from_pos(row, col)
     ---@type ColorHSL
     local hsl = {
         lum = 1 - (row - 1) / (self.palette_height - 1),
-        sat = col / (self.width - 2),
+        sat = col / (self.width - 1),
         hue = self.hue
     }
     return utils.hsl2rgb(hsl)
@@ -280,7 +276,7 @@ end
 function Picker:get_pos_from_rgb(rgb)
     local hsl = utils.rgb2hsl(rgb)
     local row = (self.palette_height - 1) * (1 - hsl.lum) + 1
-    local col = (self.width - 2) * hsl.sat
+    local col = (self.width - 1) * hsl.sat
     return {
         math.floor(row),
         math.floor(col),
@@ -300,22 +296,17 @@ function Picker:fill()
     vim.api.nvim_set_option_value('modifiable', false, { buf = self.buf })
 end
 
----@param row integer
 ---@param col integer
 ---@param jump integer
 ---@return integer
-function Picker:calc_next_col(row, col, jump)
+function Picker:calc_next_col(col, jump)
     col = col + jump
-
-    if col % 2 ~= 0 and row <= self.palette_height then
-        col = col - 1
-    end
 
     if col < 0 then
         col = 0
     end
-    if col > self.width - 2 then
-        col = self.width - 2
+    if col > self.width - 1 then
+        col = self.width - 1
     end
 
     return col
@@ -482,7 +473,7 @@ function M.setup(opts)
     _user_defaults = get_defaults(opts.defaults)
 
     vim.api.nvim_create_user_command('ColorPickerOpen', function(extra)
-        M.open({ color = extra.fargs[1] })
+        M.insert({ color = extra.fargs[1] })
     end, { nargs = '?' })
 
     vim.api.nvim_create_user_command('ColorPickerReplace', function(extra)
@@ -501,7 +492,7 @@ end
 ---@field replace_data? ReplaceData
 
 ---@param opts? OpenOpts
-function M.open(opts)
+function M.insert(opts)
     opts = opts or {}
 
     local defaults = get_defaults({ height = opts.height, width = opts.width })

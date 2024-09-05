@@ -41,16 +41,6 @@ function M.format_float(float)
     return string.sub(str, 1, cut - 1)
 end
 
----@param base integer
----@param cols integer
----@param col integer
----@param brightness number
----@return integer
-function M.col2colorbyte(base, cols, col, brightness)
-    local t = 255 / cols
-    return math.floor(math.min(math.min(col * t + base, 255) * brightness, 255))
-end
-
 ---@param hsl ColorHSL
 ---@return ColorRGB
 function M.hsl2rgb(hsl)
@@ -130,7 +120,7 @@ function M.pos2rgb(rows, cols, hue, row, col)
     ---@type ColorHSL
     local hsl = {
         lum = 1 - (row - 1) / (rows - 1),
-        sat = col / (cols - 2),
+        sat = col / (cols - 1),
         hue = hue
     }
     return M.hsl2rgb(hsl)
@@ -143,7 +133,7 @@ end
 function M.rgb2pos(rows, cols, rgb)
     local hsl = M.rgb2hsl(rgb)
     local row = (rows - 1) * (1 - hsl.lum) + 1
-    local col = (cols - 2) * hsl.sat
+    local col = (cols - 1) * hsl.sat
     return {
         math.floor(row),
         math.floor(col),
