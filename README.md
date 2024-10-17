@@ -36,6 +36,10 @@ local actions = require('color-picker.actions')
 picker.setup({
     defaults = {
         -- palette size (min 12x18)
+        --
+        -- (!) this plugin is not intended to work on fullscreen,
+        -- (!) choosing large values may lead to artifacts
+        -- (!) due to the way highlight groups work
         height = 12,
         width = 18,
 
