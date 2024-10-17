@@ -113,6 +113,7 @@ end
 ---@field hue number
 ---@field hue_char string
 ---@field hue_step number
+---@field setted_hl boolean
 ---@field jump_v integer
 ---@field jump_h integer
 ---@field init_color ColorRGBA
@@ -140,6 +141,8 @@ function Picker:init(height, width)
     self.height = height
     self.width = width
     self.palette_height = height - 3 -- hue, hex, and rgb lines
+
+    self.setted_hl = false
 
     self.buf = vim.api.nvim_create_buf(false, true)
     self:fill()
@@ -234,6 +237,7 @@ function Picker:colorize(palette)
         { bg = string.format('#%02X%02X%02X', unpack(self.init_color)) })
     vim.api.nvim_set_hl(hl_ns, 'preview-curr',
         { bg = string.format('#%02X%02X%02X', unpack(curr_color)) })
+
     local hex_size = 7
     local pad = 1 - self.width % 2
     local preview_size = (self.width - hex_size - pad) / 2
@@ -253,9 +257,13 @@ function Picker:colorize(palette)
             local group = string.format('%d-%d', row, col)
             local rgb = self:get_rgb_from_pos(row, col)
             vim.api.nvim_set_hl(hl_ns, group, { bg = string.format('#%02X%02X%02X', unpack(rgb)) })
-            vim.api.nvim_buf_add_highlight(self.buf, hl_ns, group, row - 1, col, col + 1)
+            if not self.setted_hl then
+                vim.api.nvim_buf_add_highlight(self.buf, hl_ns, group, row - 1, col, col + 1)
+            end
         end
     end
+
+    self.setted_hl = true
 end
 
 ---@return ColorRGB
